@@ -23,6 +23,14 @@ namespace Takeover
 
             // var img = SDL.SDL_LoadFile("200.png",);
 
+            var img = SDL.SDL_LoadFile("200.png", out var filething);
+            var rect = new SDL.SDL_Rect();
+            rect.h = 200;
+            rect.w = 200;
+            rect.x = 500;
+            rect.y = 500;
+            var texture = SDL.SDL_CreateRGBSurfaceFrom(img, 200,200, 1, 0,0,0,0,0);
+
             SDL.SDL_Event evt;
             bool quit = false;
 
@@ -42,17 +50,22 @@ namespace Takeover
                                     quit = true;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_f:
-                                    SDL.SDL_SetRenderDrawColor(renderer, 155, 155, 150, 0);
-                                    SDL.SDL_RenderDrawLine(renderer, 110, 210, 310, 410);
+                                    SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 1);
+                                    SDL.SDL_RenderDrawLine(renderer, 100, 100, 400, 400);
 
                                     SDL.SDL_RenderPresent(renderer);
                                     break;
                                 case SDL.SDL_Keycode.SDLK_g:
+
                                     SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 1);
-                                    SDL.SDL_RenderDrawLine(renderer, 100, 400, 200, 300);
+                                    SDL.SDL_RenderDrawLine(renderer, 100, 400, 400, 100);
 
                                     SDL.SDL_RenderPresent(renderer);
                                     break;
+                                case SDL.SDL_Keycode.SDLK_w:
+                                    SDL.SDL_RenderCopy(renderer, texture, ref rect, ref rect);
+                                    break;
+
                             }
                             break;
                     }
