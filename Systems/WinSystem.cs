@@ -10,6 +10,11 @@ namespace Takeover.Systems
     {
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
+            var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
+            if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
+            {
+                return;
+            }
             var allTeams = entities.Where(x => x.GetComponentByType<Allegiance>() != null)
             .Select(x => x.GetComponentByType<Allegiance>().Team)
             .Distinct();
@@ -22,7 +27,6 @@ namespace Takeover.Systems
                 {
                     Raylib.DrawText("YOU WIN", 20, 20, 24, Color.BLACK);
                 }
-                var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
                 singleton.GetComponentByType<Singleton>().WorldGenerated = false;
             }
 

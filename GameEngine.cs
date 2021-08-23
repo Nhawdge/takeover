@@ -21,6 +21,7 @@ namespace Takeover
             this.Systems.Add(new WinSystem());
             this.Systems.Add(new AISystem());
             this.Systems.Add(new RenderSystem());
+            this.Systems.Add(new MenuSystem());
 
             var singleton = new Entity();
             singleton.Components.Add(new Singleton());

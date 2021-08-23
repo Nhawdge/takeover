@@ -11,12 +11,18 @@ namespace Takeover.Systems
     {
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
+            var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
+            if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
+            {
+                return;
+            }
+
             var toAdd = new List<Entity>();
+            var singletonData = singleton.GetComponentByType<Singleton>();
 
             foreach (var entity in entities)
             {
-                var singleton = entity.GetComponentByType<Singleton>();
-                if (singleton != null && singleton.WorldGenerated == false)
+                if (singleton != null && singletonData.WorldGenerated == false)
                 {
                     var random = new Random();
                     for (var i = 0; i < 5; i++)
@@ -38,7 +44,7 @@ namespace Takeover.Systems
 
                         toAdd.Add(node);
                     }
-                    singleton.WorldGenerated = true;
+                    singletonData.WorldGenerated = true;
                 }
             }
             engine.Entities.AddRange(toAdd);

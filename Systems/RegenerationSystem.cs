@@ -8,6 +8,11 @@ namespace Takeover.Systems
     {
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
+            var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
+            if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
+            {
+                return;
+            }
 
             foreach (var entity in entities)
             {
