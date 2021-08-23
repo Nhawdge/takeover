@@ -38,21 +38,23 @@ namespace Takeover.Systems
                             var targetHP = targetNode.GetComponentByType<Health>();
                             var team = entity.GetComponentByType<Allegiance>();
                             var tarTeam = targetNode.GetComponentByType<Allegiance>();
-
-                            if (team.Team == tarTeam.Team)
+                            if (tarTeam != null && team != null && targetHP != null)
                             {
-                                targetHP.Current += 1;
-                            }
-                            else
-                            {
-                                targetHP.Current -= 1;
-                            }
+                                if (team.Team == tarTeam.Team)
+                                {
+                                    targetHP.Current += 1;
+                                }
+                                else
+                                {
+                                    targetHP.Current -= 1;
+                                }
 
-                            target.AttackCharge = 0;
+                                target.AttackCharge = 0;
 
-                            if (targetHP.Current <= 0)
-                            {
-                                tarTeam.Team = team.Team;
+                                if (targetHP.Current <= 0)
+                                {
+                                    tarTeam.Team = team.Team;
+                                }
                             }
                         }
                     }
