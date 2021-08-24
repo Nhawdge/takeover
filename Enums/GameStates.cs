@@ -5,6 +5,7 @@ namespace Takeover.Enums
         Menu,
         InProgress,
         Paused,
-        Ended
+        PlayerWin,
+        PlayerLose
     }
 }

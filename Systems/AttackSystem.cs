@@ -21,22 +21,29 @@ namespace Takeover.Systems
                 if (target != null && target.TargetId != null)
                 {
                     var hp = entity.GetComponentByType<Health>();
-                    target.AttackCharge += GetAttackChargeRate(hp);
 
                     var targetNode = entities.Find(x => x.Id == target.TargetId);
                     if (targetNode != null)
                     {
+                        target.AttackCharge += GetAttackChargeRate(hp);
+
                         var sourceRender = entity.GetComponentByType<Render>();
                         var targetRender = targetNode.GetComponentByType<Render>();
 
                         if (sourceRender != null && targetRender != null)
                         {
-                            Raylib.DrawLine(
-                                (int)sourceRender.Position.X + (sourceRender.width / 2),
-                                (int)sourceRender.Position.Y + (sourceRender.height / 2),
-                                (int)targetRender.Position.X + (targetRender.width / 2),
-                                (int)targetRender.Position.Y + (targetRender.height / 2),
-                                  Color.DARKBLUE);
+                            var sourceCenterX = (int)sourceRender.Position.X + (sourceRender.width / 2);
+                            var sourceCenterY = (int)sourceRender.Position.Y + (sourceRender.height / 2);
+
+                            var targetCenterX = (int)targetRender.Position.X + (targetRender.width / 2);
+                            var targetCenterY = (int)targetRender.Position.Y + (targetRender.height / 2);
+
+                            Raylib.DrawLine(sourceCenterX, sourceCenterY, targetCenterX, targetCenterY, Color.DARKBLUE);
+
+                            var circlex = sourceCenterX + ((targetCenterX - sourceCenterX) * ((float)target.AttackCharge / target.ChargeThreshold));
+                            var circley = sourceCenterY + ((targetCenterY - sourceCenterY) * ((float)target.AttackCharge / target.ChargeThreshold));
+                            Raylib.DrawCircle((int)circlex, (int)circley, 10, Color.BLACK);
+
                         }
                         if (target.AttackCharge > target.ChargeThreshold)
                         {
@@ -60,6 +67,7 @@ namespace Takeover.Systems
                                 if (targetHP.Current <= 0)
                                 {
                                     tarTeam.Team = team.Team;
+                                    targetHP.Current = 0;
                                 }
                             }
                         }
@@ -71,9 +79,13 @@ namespace Takeover.Systems
         {
             if (health.Current > 100)
             {
-                return 3;
+                return 5;
             }
             else if (health.Current > 50)
+            {
+                return 3;
+            }
+            else if (health.Current > 25)
             {
                 return 2;
             }

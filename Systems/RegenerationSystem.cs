@@ -17,34 +17,36 @@ namespace Takeover.Systems
             foreach (var entity in entities)
             {
                 var health = entity.GetComponentByType<Health>();
-                if (health == null)
+                var team = entity.GetComponentByType<Allegiance>();
+
+                if (health == null || team == null)
                 {
                     continue;
                 }
 
                 if (health.Current < health.Max)
                 {
-                    if (health.Current > 200)
+                    if (health.Current > 200 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 10;
                     }
-                    else if (health.Current > 150)
+                    else if (health.Current > 150 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 7;
                     }
-                    else if (health.Current > 100)
+                    else if (health.Current > 100 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 5;
                     }
-                    else if (health.Current > 75)
+                    else if (health.Current > 75 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 4;
                     }
-                    else if (health.Current > 50)
+                    else if (health.Current > 50 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 3;
                     }
-                    else if (health.Current > 25)
+                    else if (health.Current > 25 && team.Team != Enums.Factions.Neutral)
                     {
                         health.RegenPool += 2;
                     }

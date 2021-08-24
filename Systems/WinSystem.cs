@@ -11,25 +11,29 @@ namespace Takeover.Systems
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
-            if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
-            {
-                return;
-            }
+
             var allTeams = entities.Where(x => x.GetComponentByType<Allegiance>() != null)
-            .Select(x => x.GetComponentByType<Allegiance>().Team)
-            .Distinct();
-            Raylib.DrawText("Teams: " + allTeams.Count(), 10, 10, 12, Color.BLACK);
+                .Select(x => x.GetComponentByType<Allegiance>().Team)
+                .Distinct();
 
-            if (allTeams.Count() == 1)
+            if (singleton.GetComponentByType<Singleton>().State == Enums.GameStates.InProgress)
             {
-                var team = allTeams.FirstOrDefault();
-                if (team == Enums.Factions.Player)
-                {
-                    Raylib.DrawText("YOU WIN", 20, 20, 24, Color.BLACK);
-                }
-                singleton.GetComponentByType<Singleton>().WorldGenerated = false;
-            }
+                Raylib.DrawText("Teams: " + allTeams.Count(), 10, 10, 12, Color.BLACK);
 
+                if (allTeams.Count() == 1)
+                {
+                    var team = allTeams.FirstOrDefault();
+                    if (team == Enums.Factions.Player)
+                    {
+                        singleton.GetComponentByType<Singleton>().State = Enums.GameStates.PlayerWin;
+                    }
+                    else {
+                        singleton.GetComponentByType<Singleton>().State = Enums.GameStates.PlayerLose;
+                    }
+                    singleton.GetComponentByType<Singleton>().WorldGenerated = false;
+                }
+
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using Raylib_cs;
 namespace Takeover {
     class Program {
         static void Main(string[] args) {
-            Raylib.InitWindow(800, 480, "Take Over");
+            Raylib.InitWindow(1024, 800, "Take Over");
 
             Raylib.SetTargetFPS(30);
             var game = new GameEngine();

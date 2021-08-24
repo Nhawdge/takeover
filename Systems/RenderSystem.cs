@@ -28,12 +28,12 @@ namespace Takeover.Systems
                 {
                     Raylib.DrawText($"{health.Current}/{health.Max}", (int)render.Position.X, (int)render.Position.Y - 15, 12, Color.BLACK);
                 }
+                var target = entity.GetComponentByType<Target>();
 
                 var selectable = entity.GetComponentByType<Selectable>();
                 if (selectable != null && selectable.IsSelected)
                 {
                     Raylib.DrawRectangle((int)render.Position.X - 2, (int)render.Position.Y - 2, render.width + 4, render.height + 4, Color.BLACK);
-
                 }
 
                 var color = Color.GRAY;
@@ -41,7 +41,7 @@ namespace Takeover.Systems
                 switch (team.Team)
                 {
                     case (Factions.Player):
-                        color = Color.BLUE;
+                        color = new Color(0, 0, 255, 155 + (int)((((float)health.Current / health.Max) * 100 % 100)));
                         break;
                     case (Factions.AI):
                         color = Color.RED;
@@ -50,6 +50,7 @@ namespace Takeover.Systems
                         color = Color.GRAY;
                         break;
                 }
+
 
                 Raylib.DrawRectangle((int)render.Position.X, (int)render.Position.Y, render.width, render.height, color);
 
