@@ -15,12 +15,12 @@ namespace Takeover
         public GameEngine()
         {
             this.Systems.Add(new LevelGeneratorSystem());
+            this.Systems.Add(new RenderSystem());
             this.Systems.Add(new MovementSystem());
             this.Systems.Add(new AttackSystem());
             this.Systems.Add(new RegenerationSystem());
             this.Systems.Add(new WinSystem());
             this.Systems.Add(new AISystem());
-            this.Systems.Add(new RenderSystem());
             this.Systems.Add(new MenuSystem());
 
             var singleton = new Entity();

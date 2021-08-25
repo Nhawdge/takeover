@@ -17,37 +17,47 @@ namespace Takeover.Systems
                 return;
             }
 
-            var toAdd = new List<Entity>();
             var singletonData = singleton.GetComponentByType<Singleton>();
+            var toAdd = new List<Entity>();
 
             foreach (var entity in entities)
             {
                 if (singleton != null && singletonData.WorldGenerated == false)
                 {
-                    var random = new Random();
-                    for (var i = 0; i < 5; i++)
-                    {
-                        var node = new Entity();
-                        var width = Raylib.GetScreenWidth();
-                        var height = Raylib.GetScreenHeight();
-
-                        var render = new Render(random.Next(0, width - 60), random.Next(0, height - 60));
-
-                        node.Components.Add(render);
-
-                        node.Components.Add(new Selectable());
-                        node.Components.Add(new Target());
-                        node.Components.Add(new Health());
-
-                        var faction = (Factions)random.Next(0, 3);
-                        node.Components.Add(new Allegiance(faction));
-
-                        toAdd.Add(node);
-                    }
+                    toAdd.AddRange(GenerateNodes(Factions.AI));
+                    toAdd.AddRange(GenerateNodes(Factions.Neutral, 10));
+                    toAdd.AddRange(GenerateNodes(Factions.Player));
                     singletonData.WorldGenerated = true;
                 }
             }
             engine.Entities.AddRange(toAdd);
+
+        }
+        private IEnumerable<Entity> GenerateNodes(Factions faction, int count = 1)
+        {
+            var toAdd = new List<Entity>();
+
+            for (var i = 0; i < count; i++)
+            {
+                var random = new Random();
+
+                var node = new Entity();
+                var width = Raylib.GetScreenWidth();
+                var height = Raylib.GetScreenHeight();
+
+                var render = new Render(random.Next(0, width - 60), random.Next(0, height - 60));
+
+                node.Components.Add(render);
+
+                node.Components.Add(new Selectable());
+                node.Components.Add(new Target());
+                node.Components.Add(new Health());
+
+                node.Components.Add(new Allegiance(faction));
+
+                toAdd.Add(node);
+            }
+            return toAdd;
         }
     }
 }

@@ -41,37 +41,10 @@ namespace Takeover.Systems
                     var targetteam = target.GetComponentByType<Allegiance>();
 
                     var myTeam = entity.GetComponentByType<Allegiance>();
-                    var priorityTargets = entities.Where(x => x.GetComponentByType<Health>() != null)
+                    var priorityTargets = entities.Where(x => x.GetComponentByType<Health>() != null && x.Id != entity.Id)
                     .ToList().Select(x =>
                     {
-                        var priority = 1;
-                        var team = x.GetComponentByType<Allegiance>();
-                        var hp = x.GetComponentByType<Health>();
-                        if (team.Team == myTeam.Team)
-                        {
-                            if (hp.Current < 10)
-                            {
-                                priority += 10;
-                            }
-                            if (hp.Current < 20){
-                                
-                            }
-                            if (hp.Current > 100)
-                            {
-                                priority -= 10;
-                            }
-                        }
-                        else
-                        {
-                            if (hp.Current < 10)
-                            {
-                                priority += 5;
-                            }
-                            if (hp.Current > 100)
-                            {
-                                priority -= 5;
-                            }
-                        }
+                        var priority = Random.Next();
                         return new { x.Id, priority };
                     });
 

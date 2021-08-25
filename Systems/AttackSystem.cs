@@ -42,7 +42,7 @@ namespace Takeover.Systems
 
                             var circlex = sourceCenterX + ((targetCenterX - sourceCenterX) * ((float)target.AttackCharge / target.ChargeThreshold));
                             var circley = sourceCenterY + ((targetCenterY - sourceCenterY) * ((float)target.AttackCharge / target.ChargeThreshold));
-                            Raylib.DrawCircle((int)circlex, (int)circley, 10, Color.BLACK);
+                            Raylib.DrawCircle((int)circlex, (int)circley, 5, Color.BLACK);
 
                         }
                         if (target.AttackCharge > target.ChargeThreshold)
@@ -68,6 +68,10 @@ namespace Takeover.Systems
                                 {
                                     tarTeam.Team = team.Team;
                                     targetHP.Current = 0;
+                                }
+                                if (targetHP.Current > targetHP.Max)
+                                {
+                                    targetHP.Current = targetHP.Max;
                                 }
                             }
                         }
