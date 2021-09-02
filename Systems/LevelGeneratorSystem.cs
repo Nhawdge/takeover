@@ -24,9 +24,9 @@ namespace Takeover.Systems
             {
                 if (singleton != null && singletonData.WorldGenerated == false)
                 {
-                    toAdd.AddRange(GenerateNodes(Factions.AI));
+                    toAdd.AddRange(GenerateNodes(Factions.AI, 2));
                     toAdd.AddRange(GenerateNodes(Factions.Neutral, 10));
-                    toAdd.AddRange(GenerateNodes(Factions.Player));
+                    toAdd.AddRange(GenerateNodes(Factions.Player, 2));
                     singletonData.WorldGenerated = true;
                 }
             }
@@ -45,7 +45,7 @@ namespace Takeover.Systems
                 var width = Raylib.GetScreenWidth();
                 var height = Raylib.GetScreenHeight();
 
-                var render = new Render(random.Next(0, width - 60), random.Next(0, height - 60));
+                var render = new Render(random.Next(60, width - 60), random.Next(60, height - 60));
 
                 node.Components.Add(render);
 

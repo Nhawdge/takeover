@@ -20,7 +20,6 @@ namespace Takeover.Systems
             aiTexture = Raylib.LoadTexture("Assets/houseViking.png");
             neutralTexture = Raylib.LoadTexture("Assets/tipi.png");
             backgroundTexture = Raylib.LoadTexture("Assets/parchmentBasic.png");
-
         }
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
@@ -34,7 +33,6 @@ namespace Takeover.Systems
             }
             foreach (var entity in entities)
             {
-
                 var render = entity.GetComponentByType<Render>();
                 if (render == null)
                 {

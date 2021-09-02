@@ -39,10 +39,7 @@ namespace Takeover.Systems
                         {
                             selectable.IsSelected = true;
                         }
-
                     }
-
-
                 }
                 if (Raylib.IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON))
                 {

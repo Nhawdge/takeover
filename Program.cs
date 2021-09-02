@@ -7,7 +7,7 @@ namespace Takeover
     {
         static void Main(string[] args)
         {
-            Raylib.InitWindow(1024, 800, "Take Over");
+            Raylib.InitWindow(1366, 768, "Take Over"); // change to 16:9
 
             Raylib.SetTargetFPS(30);
             var game = new GameEngine();

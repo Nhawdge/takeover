@@ -15,93 +15,64 @@ namespace Takeover.Systems
             var data = singleton.GetComponentByType<Singleton>();
             if (data.State == Enums.GameStates.Menu)
             {
-                var startRec = DrawButton("Start Game", 1);
-                var exitRec = DrawButton("Exit Game", 2);
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+                DrawButton("Start Game", () =>
                 {
-                    var mousePos = Raylib.GetMousePosition();
-                    if (Raylib.CheckCollisionPointRec(mousePos, startRec))
-                    {
-                        singleton.GetComponentByType<Singleton>().State = Enums.GameStates.InProgress;
-                    }
-                    if (Raylib.CheckCollisionPointRec(mousePos, exitRec))
-                    {
-                        Raylib.EndDrawing();
-                        Raylib.CloseWindow();
-                        Environment.Exit(0);
-                    }
-                }
+                    singleton.GetComponentByType<Singleton>().State = Enums.GameStates.InProgress;
+                }, 0);
+                DrawButton("Exit Game", () =>
+                {
+                    Raylib.EndDrawing();
+                    Raylib.CloseWindow();
+                    Environment.Exit(0);
+                }, 1);
             }
             else if (data.State == Enums.GameStates.InProgress)
             {
-                var pause = DrawButton("Pause", 0, MenuPositions.TopRight);
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
-                {
-                    var mousePos = Raylib.GetMousePosition();
-                    if (Raylib.CheckCollisionPointRec(mousePos, pause))
-                    {
-                        data.State = Enums.GameStates.Paused;
-                    }
-                }
-
+                DrawButton("Pause", () =>
+               {
+                   data.State = Enums.GameStates.Paused;
+               }, 0, MenuPositions.TopRight);
             }
             else if (data.State == Enums.GameStates.Paused)
             {
-                var pause = DrawButton("Resume", 0);
-                var newGame = DrawButton("New Game", 1);
-                var exitRec = DrawButton("Exit Game", 3);
-
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+                DrawButton("Resume", () =>
                 {
-                    var mousePos = Raylib.GetMousePosition();
-                    if (Raylib.CheckCollisionPointRec(mousePos, pause))
-                    {
-                        data.State = Enums.GameStates.InProgress;
-                    }
-                    if (Raylib.CheckCollisionPointRec(mousePos, newGame))
-                    {
-                        engine.Entities.RemoveAll(x => x.GetComponentByType<Singleton>() == null);
-                        data.WorldGenerated = false;
-                        data.State = Enums.GameStates.InProgress;
-                    }
-                    if (Raylib.CheckCollisionPointRec(mousePos, exitRec))
-                    {
-                        Raylib.EndDrawing();
-                        Raylib.CloseWindow();
-                        Environment.Exit(0);
-                    }
-                }
+                    data.State = Enums.GameStates.InProgress;
+                });
+                DrawButton("New Game", () =>
+                {
+                    engine.Entities.RemoveAll(x => x.GetComponentByType<Singleton>() == null);
+                    data.WorldGenerated = false;
+                    data.State = Enums.GameStates.InProgress;
+                }, 1);
+                DrawButton("Exit Game", () =>
+                {
+                    Raylib.EndDrawing();
+                    Raylib.CloseWindow();
+                    Environment.Exit(0);
+                }, 3);
             }
             else if (data.State == Enums.GameStates.PlayerWin || data.State == Enums.GameStates.PlayerLose)
             {
                 var text = data.State == Enums.GameStates.PlayerWin ? "You win" : "You Lose";
                 Raylib.DrawText(text, Raylib.GetScreenWidth() / 2, Raylib.GetScreenHeight() / 2, 24, Color.BLACK);
 
-                var newGame = DrawButton("New Game", 0);
-                var exitRec = DrawButton("Exit Game", 2);
-
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+                DrawButton("New Game", () =>
                 {
-                    var mousePos = Raylib.GetMousePosition();
-
-                    if (Raylib.CheckCollisionPointRec(mousePos, newGame))
-                    {
-                        engine.Entities.RemoveAll(x => x.GetComponentByType<Singleton>() == null);
-                        data.WorldGenerated = false;
-                        data.State = Enums.GameStates.InProgress;
-                    }
-                    if (Raylib.CheckCollisionPointRec(mousePos, exitRec))
-                    {
-                        Raylib.EndDrawing();
-                        Raylib.CloseWindow();
-                        Environment.Exit(0);
-                    }
-                }
-
+                    engine.Entities.RemoveAll(x => x.GetComponentByType<Singleton>() == null);
+                    data.WorldGenerated = false;
+                    data.State = Enums.GameStates.InProgress;
+                });
+                DrawButton("Exit Game", () =>
+                {
+                    Raylib.EndDrawing();
+                    Raylib.CloseWindow();
+                    Environment.Exit(0);
+                }, 2);
             }
-
         }
-        private Rectangle DrawButton(string text, int index = 1, MenuPositions pos = MenuPositions.Center)
+
+        private void DrawButton(string text, Action action, int index = 0, MenuPositions pos = MenuPositions.Center)
         {
             const int spacing = 30;
             Vector2 startingCoords;
@@ -130,8 +101,13 @@ namespace Takeover.Systems
 
             Raylib.DrawRectangle((int)box.x, (int)box.y, (int)box.width, (int)box.height, Color.GRAY);
             Raylib.DrawTextRec(font, text, rect, 30, 1, false, Color.BEIGE);
-            return box;
 
+            var mousepos = Raylib.GetMousePosition();
+            if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON) && Raylib.CheckCollisionPointRec(mousepos, box))
+            {
+                action();
+            }
+            return;
         }
         public enum MenuPositions
         {
