@@ -50,7 +50,7 @@ namespace Takeover.Systems
                     {
                         health.RegenPool += 2;
                     }
-                    else if (health.Current > 1)
+                    else
                     {
                         health.RegenPool += 1;
                     }

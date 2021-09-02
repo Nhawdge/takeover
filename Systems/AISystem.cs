@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
+using Takeover.Enums;
 
 namespace Takeover.Systems
 {
@@ -39,15 +41,23 @@ namespace Takeover.Systems
 
                     var targetHp = target.GetComponentByType<Health>();
                     var targetteam = target.GetComponentByType<Allegiance>();
-
                     var myTeam = entity.GetComponentByType<Allegiance>();
-                    var priorityTargets = entities.Where(x => x.GetComponentByType<Health>() != null && x.Id != entity.Id)
-                    .ToList().Select(x =>
-                    {
-                        var priority = Random.Next();
-                        return new { x.Id, priority };
-                    });
+                    var myRender = entity.GetComponentByType<Render>();
 
+                    var priorityTargets = entities
+                        .Where(x => x.GetComponentByType<Health>() != null && x.Id != entity.Id && x.GetComponentByType<Allegiance>()?.Team != Factions.AI)
+                        .ToList().Select(x =>
+                        {
+                            var priority = Random.Next();
+                            var distance = DistanceBetween(myRender.Position, x.GetComponentByType<Render>().Position);
+                            return new { x.Id, priority, distance };
+                        })
+                        .OrderBy(x => x.distance);
+                    //Console.WriteLine($"I am {entity.Id.ToString().Substring(0, 4)} -- " + string.Join(", ", priorityTargets.Select(x => $"{x.Id.ToString().Substring(0, 4)} {x.distance}")));
+                    if (targetteam.Team == Factions.AI)
+                    {
+                        myTarget.TargetId = priorityTargets.ElementAtOrDefault(0).Id;
+                    }
                     if (priorityTargets.Count() >= 1)
                     {
                         myTarget.TargetId = priorityTargets.ElementAtOrDefault(0).Id;
@@ -62,5 +72,15 @@ namespace Takeover.Systems
             return entities.Where(x => x.GetComponentByType<Singleton>() == null && x.GetComponentByType<Allegiance>()?.Team != myTeam.Team);
 
         }
+        private int DistanceBetween(Vector2 a, Vector2 b)
+        {
+            var xDiff = a.X - b.X;
+            var ydiff = a.Y - b.Y;
+            var aSq = Math.Pow(xDiff, 2);
+            var bSq = Math.Pow(ydiff, 2);
+            var c = Math.Sqrt(aSq + bSq);
+            return (int)c;
+        }
+
     }
 }

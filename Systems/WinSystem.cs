@@ -27,7 +27,8 @@ namespace Takeover.Systems
                     {
                         singleton.GetComponentByType<Singleton>().State = Enums.GameStates.PlayerWin;
                     }
-                    else {
+                    else
+                    {
                         singleton.GetComponentByType<Singleton>().State = Enums.GameStates.PlayerLose;
                     }
                     singleton.GetComponentByType<Singleton>().WorldGenerated = false;
