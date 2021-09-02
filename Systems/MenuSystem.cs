@@ -15,16 +15,21 @@ namespace Takeover.Systems
             var data = singleton.GetComponentByType<Singleton>();
             if (data.State == Enums.GameStates.Menu)
             {
-                DrawButton("Start Game", () =>
+                DrawButton("Campaign", () =>
+                {
+                    singleton.GetComponentByType<Singleton>().State = Enums.GameStates.CampaignLevelSelect;
+                });
+                DrawButton("Random Map", () =>
                 {
                     singleton.GetComponentByType<Singleton>().State = Enums.GameStates.InProgress;
-                }, 0);
+
+                }, 1);
                 DrawButton("Exit Game", () =>
                 {
                     Raylib.EndDrawing();
                     Raylib.CloseWindow();
                     Environment.Exit(0);
-                }, 1);
+                }, 3);
             }
             else if (data.State == Enums.GameStates.InProgress)
             {
@@ -69,6 +74,19 @@ namespace Takeover.Systems
                     Raylib.CloseWindow();
                     Environment.Exit(0);
                 }, 2);
+            }
+            else if (data.State == Enums.GameStates.CampaignLevelSelect)
+            {
+                DrawButton("Level 1", () =>
+                {
+                    data.State = Enums.GameStates.InProgress;
+                    data.CampaignLevel = "1";
+                });
+                DrawButton("Level 2", () =>
+                {
+                    data.State = Enums.GameStates.InProgress;
+                    data.CampaignLevel = "2";
+                }, 1);
             }
         }
 
