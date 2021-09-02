@@ -7,5 +7,6 @@ namespace Takeover.Components
         public GameStates State { get; set; } = GameStates.Menu;
 
         public bool WorldGenerated = false;
+        public string CampaignLevel { get; set; }
     }
 }

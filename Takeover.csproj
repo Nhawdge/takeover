@@ -1,5 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,16 +10,19 @@
     <Configuration>Release</Configuration>
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
-
-   <ItemGroup>
+  <ItemGroup>
     <None Update="Assets/*.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Raylib-cs" Version="3.7.0" />
+    <Content Include="Systems\MenuSystem.cs" />
+    <Content Include="Data\Campaign.xml" />
+    <Content Include="Enums\GameStates.cs" />
+    <Content Include="Components\Singleton.cs" />
+    <Content Include="Systems\AISystem.cs" />
+    <Content Include="Systems\LevelGeneratorSystem.cs" />
   </ItemGroup>
-
 </Project>

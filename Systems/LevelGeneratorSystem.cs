@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
+using System.Xml.Serialization;
 using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
@@ -12,52 +15,145 @@ namespace Takeover.Systems
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
-            if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
+            var data = singleton.GetComponentByType<Singleton>();
+            if (data.State == Enums.GameStates.InProgress)
             {
-                return;
-            }
+                var toAdd = new List<Entity>();
 
-            var singletonData = singleton.GetComponentByType<Singleton>();
-            var toAdd = new List<Entity>();
-
-            foreach (var entity in entities)
-            {
-                if (singleton != null && singletonData.WorldGenerated == false)
+                if (data.WorldGenerated)
                 {
-                    toAdd.AddRange(GenerateNodes(Factions.AI, 2));
-                    toAdd.AddRange(GenerateNodes(Factions.Neutral, 10));
-                    toAdd.AddRange(GenerateNodes(Factions.Player, 2));
-                    singletonData.WorldGenerated = true;
+                    return;
                 }
-            }
-            engine.Entities.AddRange(toAdd);
 
+                if (!string.IsNullOrEmpty(data.CampaignLevel))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Campaign));
+                    var xml = File.ReadAllText("Data/Campaign.xml");
+
+                    using (StringReader reader = new StringReader(xml))
+                    {
+                        var campaign = (Campaign)serializer.Deserialize(reader);
+                        var level = campaign.Level.Find(x => x.Index == int.Parse(data.CampaignLevel));
+                        foreach (var node in level.Nodes.Node)
+                        {
+                            var faction = Enums.Factions.Neutral;
+                            switch (node.Owner)
+                            {
+                                case "Player":
+                                    faction = Factions.Player;
+                                    break;
+                                case "AI":
+                                    faction = Factions.AI;
+                                    break;
+                            }
+                            toAdd.AddRange(GenerateNodes(faction, new Vector2(node.X, node.Y)));
+                        }
+                    }
+                }
+                else 
+                {
+                    toAdd.AddRange(GenerateRandomNodes(Factions.AI, 2));
+                    toAdd.AddRange(GenerateRandomNodes(Factions.Neutral, 10));
+                    toAdd.AddRange(GenerateRandomNodes(Factions.Player, 2));
+                }
+                engine.Entities.AddRange(toAdd);
+                data.WorldGenerated = true;
+            }
         }
-        private IEnumerable<Entity> GenerateNodes(Factions faction, int count = 1)
+
+        private IEnumerable<Entity> GenerateRandomNodes(Factions faction, int count = 1)
         {
             var toAdd = new List<Entity>();
+            var width = Raylib.GetScreenWidth();
+            var height = Raylib.GetScreenHeight();
+            var random = new Random();
 
             for (var i = 0; i < count; i++)
             {
-                var random = new Random();
-
                 var node = new Entity();
-                var width = Raylib.GetScreenWidth();
-                var height = Raylib.GetScreenHeight();
 
                 var render = new Render(random.Next(60, width - 60), random.Next(60, height - 60));
-
                 node.Components.Add(render);
-
                 node.Components.Add(new Selectable());
                 node.Components.Add(new Target());
                 node.Components.Add(new Health());
-
                 node.Components.Add(new Allegiance(faction));
 
                 toAdd.Add(node);
             }
             return toAdd;
         }
+
+        private IEnumerable<Entity> GenerateNodes(Factions faction, Vector2 position)
+        {
+            var toAdd = new List<Entity>();
+
+            var render = new Render(position);
+            var node = new Entity();
+            node.Components.Add(render);
+            node.Components.Add(new Selectable());
+            node.Components.Add(new Target());
+            node.Components.Add(new Health());
+            node.Components.Add(new Allegiance(faction));
+
+            toAdd.Add(node);
+
+            return toAdd;
+        }
     }
+
+    // using System.Xml.Serialization;
+    // XmlSerializer serializer = new XmlSerializer(typeof(Campaign));
+    // using (StringReader reader = new StringReader(xml))
+    // {
+    //    var test = (Campaign)serializer.Deserialize(reader);
+    // }
+
+    [XmlRoot(ElementName = "Node")]
+    public class Node
+    {
+
+        [XmlAttribute(AttributeName = "x")]
+        public int X { get; set; }
+
+        [XmlAttribute(AttributeName = "y")]
+        public int Y { get; set; }
+
+        [XmlAttribute(AttributeName = "owner")]
+        public string Owner { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Nodes")]
+    public class Nodes
+    {
+
+        [XmlElement(ElementName = "Node")]
+        public List<Node> Node { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Level")]
+    public class Level
+    {
+
+        [XmlElement(ElementName = "Nodes")]
+        public Nodes Nodes { get; set; }
+
+        [XmlAttribute(AttributeName = "index")]
+        public int Index { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Campaign")]
+    public class Campaign
+    {
+
+        [XmlElement(ElementName = "Level")]
+        public List<Level> Level { get; set; }
+
+        [XmlAttribute(AttributeName = "version")]
+        public string Version { get; set; }
+    }
+
+
+
+
 }

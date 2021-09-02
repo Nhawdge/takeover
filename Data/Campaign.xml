@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Campaign version="0.0.1">
+    <Level index="1">
+        <Nodes>
+            <Node x="100" y="100" owner="Player" />
+            <Node x="100" y="150" owner="Player" />
+            <Node x="500" y="500" owner="AI" />
+        </Nodes>
+    </Level>
+    <Level index="2">
+        <Nodes>
+            <Node x="100" y="100" owner="Player" />
+            <Node x="175" y="200" owner="Player" />
+            <Node x="500" y="500" owner="AI" />
+        </Nodes>
+    </Level>
+    <Level index="3">
+        <Nodes>
+            <Node x="10" y="10" owner="Player" />
+            <Node x="500" y="500" owner="AI" />
+        </Nodes>
+    </Level>
+    <Level index="4">
+        <Nodes>
+            <Node x="10" y="10" owner="Player" />
+            <Node x="500" y="500" owner="AI" />
+        </Nodes>
+    </Level>
+</Campaign>
