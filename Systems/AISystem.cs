@@ -6,6 +6,7 @@ using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
 using Takeover.Enums;
+using Takeover;
 
 namespace Takeover.Systems
 {
@@ -49,7 +50,7 @@ namespace Takeover.Systems
                         .ToList().Select(x =>
                         {
                             var priority = Random.Next();
-                            var distance = DistanceBetween(myRender.Position, x.GetComponentByType<Render>().Position);
+                            var distance = Utilities.DistanceBetween(myRender.Position, x.GetComponentByType<Render>().Position);
                             return new { x.Id, priority, distance };
                         })
                         .OrderBy(x => x.distance);
@@ -70,17 +71,6 @@ namespace Takeover.Systems
             var myTeam = entity.GetComponentByType<Allegiance>();
 
             return entities.Where(x => x.GetComponentByType<Singleton>() == null && x.GetComponentByType<Allegiance>()?.Team != myTeam.Team);
-
         }
-        private int DistanceBetween(Vector2 a, Vector2 b)
-        {
-            var xDiff = a.X - b.X;
-            var ydiff = a.Y - b.Y;
-            var aSq = Math.Pow(xDiff, 2);
-            var bSq = Math.Pow(ydiff, 2);
-            var c = Math.Sqrt(aSq + bSq);
-            return (int)c;
-        }
-
     }
 }

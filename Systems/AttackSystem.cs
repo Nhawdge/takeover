@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
+using Takeover.Enums;
 
 namespace Takeover.Systems
 {
@@ -15,68 +17,63 @@ namespace Takeover.Systems
             {
                 return;
             }
+            var toAdd = new List<Entity>();
+            var toRemove = new List<Entity>();
             foreach (var entity in entities)
             {
-                var target = entity.GetComponentByType<Target>();
-                if (target != null && target.TargetId != null)
+                var myTarget = entity.GetComponentByType<Target>();
+                var myRender = entity.GetComponentByType<Render>();
+                var myTeam = entity.GetComponentByType<Allegiance>();
+                if (myTarget != null && myRender != null && myTeam != null)
                 {
-                    var hp = entity.GetComponentByType<Health>();
-
-                    var targetNode = entities.Find(x => x.Id == target.TargetId);
-                    if (targetNode != null)
+                    if (myTarget.TargetId != Guid.Empty)
                     {
-                        target.AttackCharge += GetAttackChargeRate(hp);
+                        myTarget.AttackCharge++;
+                    }
 
-                        var sourceRender = entity.GetComponentByType<Render>();
-                        var targetRender = targetNode.GetComponentByType<Render>();
-
-                        if (sourceRender != null && targetRender != null)
+                    if (myTarget.AttackCharge > myTarget.ChargeThreshold)
+                    {
+                        var attack = CreateNewAttack(myRender.Position, myTeam.Team, 1, myTarget.TargetId);
+                        Console.WriteLine($"{entity.ShortId()} is creating {attack.ShortId()}, at {myRender.Position.X},{myRender.Position.Y}");
+                        myTarget.AttackCharge -= myTarget.ChargeThreshold;
+                        toAdd.Add(attack);
+                    }
+                }
+                var myAttack = entity.GetComponentByType<Attack>();
+                if (myAttack != null && myAttack.TargetId != null)
+                {
+                    var targetEntity = engine.Entities.Find(x => x.Id == myAttack.TargetId);
+                    if (targetEntity == null)
+                    {
+                        continue;
+                    }
+                    var targetRender = targetEntity.GetComponentByType<Render>();
+                    var hit = Raylib.CheckCollisionCircleRec(myRender.Position, 5f, new Rectangle(targetRender.Position.X, targetRender.Position.Y, targetRender.width, targetRender.height));
+                    if (hit)
+                    {
+                        var targetTeam = targetEntity.GetComponentByType<Allegiance>();
+                        var targetHealth = targetEntity.GetComponentByType<Health>();
+                        if (myTeam.Team == targetTeam.Team)
                         {
-                            var sourceCenterX = (int)sourceRender.Position.X + (sourceRender.width / 2);
-                            var sourceCenterY = (int)sourceRender.Position.Y + (sourceRender.height / 2);
-
-                            var targetCenterX = (int)targetRender.Position.X + (targetRender.width / 2);
-                            var targetCenterY = (int)targetRender.Position.Y + (targetRender.height / 2);
-
-                            Raylib.DrawLine(sourceCenterX, sourceCenterY, targetCenterX, targetCenterY, Color.DARKBLUE);
-
-                            var circlex = sourceCenterX + ((targetCenterX - sourceCenterX) * ((float)target.AttackCharge / target.ChargeThreshold));
-                            var circley = sourceCenterY + ((targetCenterY - sourceCenterY) * ((float)target.AttackCharge / target.ChargeThreshold));
-                            Raylib.DrawCircle((int)circlex, (int)circley, 5, Color.BLACK);
-
+                            targetHealth.Current += myAttack.Value;
                         }
-                        if (target.AttackCharge > target.ChargeThreshold)
+                        else
                         {
-                            var targetHP = targetNode.GetComponentByType<Health>();
-                            var team = entity.GetComponentByType<Allegiance>();
-                            var tarTeam = targetNode.GetComponentByType<Allegiance>();
-
-                            if (tarTeam != null && team != null && targetHP != null)
-                            {
-                                if (team.Team == tarTeam.Team)
-                                {
-                                    targetHP.Current += 1;
-                                }
-                                else
-                                {
-                                    targetHP.Current -= 1;
-                                }
-
-                                target.AttackCharge = 0;
-
-                                if (targetHP.Current <= 0)
-                                {
-                                    tarTeam.Team = team.Team;
-                                    targetHP.Current = 0;
-                                }
-                                if (targetHP.Current > targetHP.Max)
-                                {
-                                    targetHP.Current = targetHP.Max;
-                                }
-                            }
+                            targetHealth.Current -= myAttack.Value;
+                        }
+                        toRemove.Add(entity);
+                        if (targetHealth.Current <= 0)
+                        {
+                            targetTeam.Team = myTeam.Team;
                         }
                     }
                 }
+
+            }
+            engine.Entities.AddRange(toAdd);
+            foreach (var entity in toRemove)
+            {
+                engine.Entities.Remove(entity);
             }
         }
         private int GetAttackChargeRate(Health health)
@@ -95,6 +92,18 @@ namespace Takeover.Systems
             }
             return 1;
 
+        }
+
+        private Entity CreateNewAttack(Vector2 origin, Factions faction, int value, Guid targetId)
+        {
+            var entity = new Entity();
+            var render = new Render(origin) { RenderType = RenderType.Attack };
+            var allegiance = new Allegiance(faction);
+            var attack = new Attack { Value = value, TargetId = targetId, OriginalPosition = origin };
+            entity.Components.Add(render);
+            entity.Components.Add(allegiance);
+            entity.Components.Add(attack);
+            return entity;
         }
     }
 }

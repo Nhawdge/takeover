@@ -52,8 +52,8 @@ namespace Takeover.Systems
                 }
                 else 
                 {
-                    toAdd.AddRange(GenerateRandomNodes(Factions.AI, 2));
-                    toAdd.AddRange(GenerateRandomNodes(Factions.Neutral, 10));
+                    toAdd.AddRange(GenerateRandomNodes(Factions.AI, 1));
+                    toAdd.AddRange(GenerateRandomNodes(Factions.Neutral, 4));
                     toAdd.AddRange(GenerateRandomNodes(Factions.Player, 2));
                 }
                 engine.Entities.AddRange(toAdd);

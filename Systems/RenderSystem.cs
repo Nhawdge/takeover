@@ -41,9 +41,9 @@ namespace Takeover.Systems
                 var health = entity.GetComponentByType<Health>();
                 if (health != null)
                 {
-                    Raylib.DrawText($"{health.Current}/{health.Max}", (int)render.Position.X, (int)render.Position.Y - 15, 12, Color.BLACK);
+                    Raylib.DrawText($"{health.Current}/{health.Max}({entity.ShortId()}-{render.Position.X},{render.Position.Y} )", (int)render.Position.X, (int)render.Position.Y - 15, 12, Color.BLACK);
                 }
-                var target = entity.GetComponentByType<Target>();
+                var myTarget = entity.GetComponentByType<Target>();
 
                 var selectable = entity.GetComponentByType<Selectable>();
                 if (selectable != null && selectable.IsSelected)
@@ -51,29 +51,67 @@ namespace Takeover.Systems
                     var bgcolor = new Color(0, 0, 0, 150);
                     Raylib.DrawRectangle((int)render.Position.X - 2, (int)render.Position.Y - 2, render.width + 4, render.height + 4, bgcolor);
                 }
-
-                var color = Color.GRAY;
-                var team = entity.GetComponentByType<Allegiance>();
-                var texture = neutralTexture;
-                switch (team.Team)
+                if (render.RenderType == RenderType.Node)
                 {
-                    case (Factions.Player):
-                        color = new Color(0, 0, 255, 155 + (int)((((float)health.Current / health.Max) * 100 % 100)));
-                        texture = playerTexture;
-                        break;
-                    case (Factions.AI):
-                        color = Color.RED;
-                        texture = aiTexture;
-                        break;
-                    default:
-                        color = Color.GRAY;
-                        texture = neutralTexture;
-                        break;
-                }
-                source = new Rectangle(0, 0, texture.width, texture.height);
-                var destination = new Rectangle((int)render.Position.X, (int)render.Position.Y, render.width, render.height);
+                    var color = Color.GRAY;
+                    var team = entity.GetComponentByType<Allegiance>();
+                    var texture = neutralTexture;
+                    switch (team.Team)
+                    {
+                        case (Factions.Player):
+                            color = Color.BLUE;
+                            texture = playerTexture;
+                            break;
+                        case (Factions.AI):
+                            color = Color.RED;
+                            texture = aiTexture;
+                            break;
+                        default:
+                            color = Color.GRAY;
+                            texture = neutralTexture;
+                            break;
+                    }
+                    source = new Rectangle(0, 0, texture.width, texture.height);
+                    var destination = new Rectangle((int)render.Position.X, (int)render.Position.Y, render.width, render.height);
 
-                Raylib.DrawTexturePro(texture, source, destination, new Vector2(0, 0), 0f, color);
+
+                    Raylib.DrawTexturePro(texture, source, destination, new Vector2(0, 0), 0f, color);
+
+                    var target = engine.Entities.Find(x => x.Id == myTarget.TargetId);
+                    if (target != null)
+                    {
+                        var targetRender = target.GetComponentByType<Render>();
+                        Raylib.DrawLine((int)render.Position.X, (int)render.Position.Y, (int)targetRender.Position.X, (int)targetRender.Position.Y, Color.DARKBLUE);
+                    }
+                }
+                if (render.RenderType == RenderType.Attack)
+                {
+                    Console.WriteLine($"Rendering {entity.ShortId()} at {render.Position.X},{render.Position.Y}");
+                    var myAttack = entity.GetComponentByType<Attack>();
+                    var target = engine.Entities.Find(x => x.Id == myAttack.TargetId);
+                    if (target == null)
+                    {
+                        continue;
+                    }
+                    var targetRender = target.GetComponentByType<Render>();
+
+                    var distance = Utilities.DistanceBetween(render.Position, targetRender.Position);
+
+                    var xdiff = render.Position.X - targetRender.Position.X;
+                    var ydiff = render.Position.Y - targetRender.Position.Y;
+                    var angleRadians = Math.Atan2(ydiff, xdiff) * (180 / Math.PI);
+                    var pos = render.Position;
+                    
+                    pos.X += (float)Math.Cos(angleRadians) * myAttack.Speed;
+                    pos.Y += (float)Math.Sin(angleRadians) * myAttack.Speed;
+                    Console.WriteLine($"{angleRadians} between {xdiff}, {ydiff}, new position is {pos.X},{pos.Y}");
+                    render.Position = pos;
+
+                    Raylib.DrawText($"{entity.ShortId()}-{render.Position.X},{render.Position.Y} )", (int)render.Position.X, (int)render.Position.Y - 15, 12, Color.BLACK);
+
+                    Raylib.DrawCircle((int)render.Position.X, (int)render.Position.Y, 5, Color.BLACK);
+
+                }
             }
         }
     }

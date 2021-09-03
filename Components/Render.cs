@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using Takeover.Enums;
 
 namespace Takeover.Components
 {
@@ -9,6 +10,7 @@ namespace Takeover.Components
         public int width { get; set; } = 50;
         public int height { get; set; } = 50;
         public Vector2 Position { get; set; }
+        public RenderType RenderType { get; set; } = RenderType.Node;
         public Render()
         {
         }

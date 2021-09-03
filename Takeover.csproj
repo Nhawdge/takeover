@@ -24,5 +24,26 @@
     <Content Include="Components\Singleton.cs" />
     <Content Include="Systems\AISystem.cs" />
     <Content Include="Systems\LevelGeneratorSystem.cs" />
+    <Content Include="Systems\AttackSystem.cs" />
+    <Content Include="Components\Attack.cs" />
+    <Content Include="Components\Health.cs" />
+    <Content Include="Enums\RenderType.cs" />
+    <Content Include="Components\Render.cs" />
+    <Content Include="Components\Target.cs" />
+    <Content Include="Utilities.cs" />
+    <Content Include="Program.cs" />
+    <Content Include="README.md" />
+    <Content Include="GameEngine.cs" />
+    <Content Include="Systems\WinSystem.cs" />
+    <Content Include="Systems\MovementSystem.cs" />
+    <Content Include="Systems\System.cs" />
+    <Content Include="Systems\RenderSystem.cs" />
+    <Content Include="Systems\RegenerationSystem.cs" />
+    <Content Include="Enums\Factions.cs" />
+    <Content Include="Entities\EntityHelpers.cs" />
+    <Content Include="Entities\Entity.cs" />
+    <Content Include="Components\Selectable.cs" />
+    <Content Include="Components\Component.cs" />
+    <Content Include="Components\Allegiance.cs" />
   </ItemGroup>
 </Project>
