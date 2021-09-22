@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
 using Takeover.Systems;
@@ -11,9 +12,12 @@ namespace Takeover
 
         private List<Systems.System> Systems { get; set; } = new List<Systems.System>();
         public List<Entity> Entities { get; set; } = new List<Entity>();
+        public Camera2D Camera { get; set; }
 
-        public GameEngine()
+        public GameEngine(Camera2D camera)
         {
+            this.Camera = camera;
+
             this.Systems.Add(new LevelGeneratorSystem());
             this.Systems.Add(new RenderSystem());
             this.Systems.Add(new MovementSystem());

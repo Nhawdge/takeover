@@ -27,5 +27,6 @@
     <Content Include="Components\Singleton.cs" />
     <Content Include="Systems\AISystem.cs" />
     <Content Include="Systems\LevelGeneratorSystem.cs" />
+    <Content Include="Systems\RenderSystem.cs" />
   </ItemGroup>
 </Project>

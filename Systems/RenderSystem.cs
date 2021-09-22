@@ -74,6 +74,10 @@ namespace Takeover.Systems
                     var angle = Math.Atan2(yDiff, xDiff) * (180 / Math.PI);
                     rotation = (float)angle;
                     origin = new Vector2(render.width / 2, render.height / 2);
+                    Shader shader = new Shader();
+
+                    var value = 100;
+                    Raylib.SetShaderValue(shader, 10, ref value, ShaderUniformDataType.SHADER_UNIFORM_INT);
 
                 }
 

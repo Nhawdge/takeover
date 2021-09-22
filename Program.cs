@@ -10,9 +10,9 @@ namespace Takeover
             Raylib.InitWindow(1366, 768, "Take Over"); // change to 16:9
 
             Raylib.SetTargetFPS(30);
-            var game = new GameEngine();
             Camera2D camera = new Camera2D();
             camera.zoom = 1;
+            var game = new GameEngine(camera);
             
             while (!Raylib.WindowShouldClose())
             {
