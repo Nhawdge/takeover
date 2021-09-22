@@ -54,7 +54,7 @@ namespace Takeover.Systems
                         })
                         .OrderBy(x => x.distance);
                     //Console.WriteLine($"I am {entity.Id.ToString().Substring(0, 4)} -- " + string.Join(", ", priorityTargets.Select(x => $"{x.Id.ToString().Substring(0, 4)} {x.distance}")));
-                    if (targetteam.Team == Factions.AI)
+                    if (targetteam?.Team == Factions.AI)
                     {
                         myTarget.TargetId = priorityTargets.ElementAtOrDefault(0).Id;
                     }

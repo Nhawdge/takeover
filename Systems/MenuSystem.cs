@@ -48,6 +48,7 @@ namespace Takeover.Systems
                 {
                     engine.Entities.RemoveAll(x => x.GetComponentByType<Singleton>() == null);
                     data.WorldGenerated = false;
+                    data.CampaignLevel = string.Empty;
                     data.State = Enums.GameStates.InProgress;
                 }, 1);
                 DrawButton("Exit Game", () =>

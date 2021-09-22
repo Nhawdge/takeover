@@ -1,3 +1,5 @@
+using System.Net.Mime;
+using System.Text.RegularExpressions;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -53,27 +55,29 @@ namespace Takeover.Systems
                 }
 
                 var color = Color.GRAY;
-                var team = entity.GetComponentByType<Allegiance>();
-                var texture = neutralTexture;
-                switch (team.Team)
-                {
-                    case (Factions.Player):
-                        color = new Color(0, 0, 255, 155 + (int)((((float)health.Current / health.Max) * 100 % 100)));
-                        texture = playerTexture;
-                        break;
-                    case (Factions.AI):
-                        color = Color.RED;
-                        texture = aiTexture;
-                        break;
-                    default:
-                        color = Color.GRAY;
-                        texture = neutralTexture;
-                        break;
-                }
+                var team = entity.GetComponentByType<Allegiance>()?.Team ?? Enums.Factions.Neutral;
+                var texture = render.Texture;
+
                 source = new Rectangle(0, 0, texture.width, texture.height);
                 var destination = new Rectangle((int)render.Position.X, (int)render.Position.Y, render.width, render.height);
 
-                Raylib.DrawTexturePro(texture, source, destination, new Vector2(0, 0), 0f, color);
+                var rotation = 0f;
+                var origin = new Vector2(0, 0);
+
+                var myControllable = entity.GetComponentByType<Controllable>();
+                if (myControllable != null)
+                {
+                    var mousePos = Raylib.GetMousePosition();
+                    var myPos = render.Position;
+                    var xDiff = myPos.X - mousePos.X;
+                    var yDiff = myPos.Y - mousePos.Y;
+                    var angle = Math.Atan2(yDiff, xDiff) * (180 / Math.PI);
+                    rotation = (float)angle;
+                    origin = new Vector2(render.width / 2, render.height / 2);
+
+                }
+
+                Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
             }
         }
     }

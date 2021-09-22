@@ -17,58 +17,31 @@ namespace Takeover.Systems
             }
             foreach (var entity in entities)
             {
-                var render = entity.GetComponentByType<Render>();
-                var selectable = entity.GetComponentByType<Selectable>();
-                if (render == null || selectable == null)
+
+                var myControllable = entity.GetComponentByType<Controllable>();
+                var myRender = entity.GetComponentByType<Render>();
+                if (myControllable == null || myRender == null)
                 {
                     continue;
                 }
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+                var pos = myRender.Position;
+                if (Raylib.IsKeyDown(myControllable.Left))
                 {
-                    //render.Position = Raylib.GetMousePosition();
-                    var rect = new Rectangle(render.Position.X, render.Position.Y, render.width, render.height);
-                    var isClicked = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
-                    var team = entity.GetComponentByType<Allegiance>();
-
-                    selectable.IsSelected = false;
-
-                    if (team != null && team.Team == Factions.Player)
-                    {
-
-                        if (isClicked)
-                        {
-                            selectable.IsSelected = true;
-                        }
-                    }
+                    pos.X -= 2;
                 }
-                if (Raylib.IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON))
+                if (Raylib.IsKeyDown(myControllable.Up))
                 {
-                    var currentSelection = entities.Find(x => x.GetComponentByType<Selectable>()?.IsSelected == true);
-                    if (currentSelection != null)
-                    {
-                        var selectedRender = currentSelection.GetComponentByType<Render>();
-                        var pos = Raylib.GetMousePosition();
-
-                        Raylib.DrawLine((int)selectedRender.Position.X + (selectedRender.width / 2), (int)selectedRender.Position.Y + (selectedRender.height / 2), (int)pos.X, (int)pos.Y, Color.ORANGE);
-
-                        var rect = new Rectangle(render.Position.X, render.Position.Y, render.width, render.height);
-                        var isTarget = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
-                        if (isTarget)
-                        {
-                            var curTarget = currentSelection.GetComponentByType<Target>();
-                            if (curTarget != null)
-                            {
-                                if (currentSelection.Id != entity.Id)
-                                {
-
-                                    curTarget.TargetId = entity.Id;
-                                }
-                            }
-                        }
-
-                    }
+                    pos.Y -= 2;
                 }
-
+                if (Raylib.IsKeyDown(myControllable.Right))
+                {
+                    pos.X += 2;
+                }
+                if (Raylib.IsKeyDown(myControllable.Down))
+                {
+                    pos.Y += 2;
+                }
+                myRender.Position = pos;
             }
         }
     }

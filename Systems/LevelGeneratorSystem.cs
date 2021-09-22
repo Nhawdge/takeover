@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+using System.Net.Mime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +14,13 @@ namespace Takeover.Systems
 {
     public class LevelGeneratorSystem : Systems.System
     {
+        private Texture2D TowerTexture { get; set; }
+        private Texture2D PlayerTexture { get; set; }
+        public LevelGeneratorSystem()
+        {
+            TowerTexture = Raylib.LoadTexture("Assets/tower.png");
+            PlayerTexture = Raylib.LoadTexture("Assets/player.png");
+        }
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
@@ -50,11 +59,16 @@ namespace Takeover.Systems
                         }
                     }
                 }
-                else 
+                else
                 {
                     toAdd.AddRange(GenerateRandomNodes(Factions.AI, 2));
                     toAdd.AddRange(GenerateRandomNodes(Factions.Neutral, 10));
-                    toAdd.AddRange(GenerateRandomNodes(Factions.Player, 2));
+                    //toAdd.AddRange(GenerateRandomNodes(Factions.Player, 2));
+                    var player = new Entity();
+
+                    player.Components.Add(new Render() { Texture = PlayerTexture });
+                    player.Components.Add(new Controllable());
+                    toAdd.Add(player);
                 }
                 engine.Entities.AddRange(toAdd);
                 data.WorldGenerated = true;
@@ -73,6 +87,7 @@ namespace Takeover.Systems
                 var node = new Entity();
 
                 var render = new Render(random.Next(60, width - 60), random.Next(60, height - 60));
+                render.Texture = TowerTexture;
                 node.Components.Add(render);
                 node.Components.Add(new Selectable());
                 node.Components.Add(new Target());
@@ -89,6 +104,8 @@ namespace Takeover.Systems
             var toAdd = new List<Entity>();
 
             var render = new Render(position);
+            render.Texture = TowerTexture;
+
             var node = new Entity();
             node.Components.Add(render);
             node.Components.Add(new Selectable());
