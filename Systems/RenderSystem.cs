@@ -7,6 +7,7 @@ using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
 using Takeover.Enums;
+using System.Runtime.InteropServices;
 
 namespace Takeover.Systems
 {
@@ -30,10 +31,27 @@ namespace Takeover.Systems
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var source = new Rectangle(0, 0, backgroundTexture.width, backgroundTexture.height);
-            Raylib.BeginShaderMode(fogShader);
             var bgLoc = Raylib.GetShaderLocation(fogShader, "background");
             Raylib.SetShaderValueTexture(fogShader, bgLoc, backgroundTexture);
+
+            var player = entities.Find(x => x.GetComponentByType<Controllable>() != null);
+            var playerRender = player?.GetComponentByType<Render>();
+            if (playerRender != null)
+            {
+                var playerXLoc = Raylib.GetShaderLocation(lightShader, "playerX");
+                var playerYLoc = Raylib.GetShaderLocation(lightShader, "playerY");
+                var posX = (int)playerRender.Position.X;
+                var posY = Raylib.GetScreenHeight() - (int)playerRender.Position.Y;// (int)myPos.Y;
+                Raylib.SetShaderValue(lightShader, playerXLoc, ref posX, ShaderUniformDataType.SHADER_UNIFORM_INT);
+                Raylib.SetShaderValue(lightShader, playerYLoc, ref posY, ShaderUniformDataType.SHADER_UNIFORM_INT);
+            }
+
+            Raylib.BeginShaderMode(fogShader);
+            Raylib.BeginShaderMode(lightShader);
+
             Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.ORANGE);
+
+            Raylib.EndShaderMode();
             Raylib.EndShaderMode();
 
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
@@ -41,6 +59,7 @@ namespace Takeover.Systems
             {
                 return;
             }
+
             foreach (var entity in entities)
             {
                 var render = entity.GetComponentByType<Render>();
@@ -87,12 +106,8 @@ namespace Takeover.Systems
                     //var textureLoc = Raylib.GetShaderLocation(shader, "ourTexture");
                     //Raylib.SetShaderValueTexture(shader, textureLoc, playerTexture);
 
-                    Raylib.BeginShaderMode(lightShader);
-                    var playerLoc = Raylib.GetShaderLocation(lightShader, "player");
 
-                    Raylib.SetShaderValue(lightShader, playerLoc, &myPos, ShaderUniformDataType.SHADER_UNIFORM_VEC2);
                     Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
-                    Raylib.EndShaderMode();
                 }
                 else
                 {

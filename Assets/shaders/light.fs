@@ -1,7 +1,8 @@
 #version 330 core
 
 uniform sampler2D ourTexture;
-uniform vec2 player;
+uniform int playerX;
+uniform int playerY;
 
 void main()
 {
@@ -9,6 +10,13 @@ void main()
     vec2 screenXY = vec2(1368, 768);
     vec2 xy = fragXY / screenXY;
     vec4 texColor = texture(ourTexture, xy);
-
+    vec2 playerXY = vec2(playerX, playerY);
+    
+    //float dist = distance(fragXY, playerXY) / 10;    
+    //if (dist < 100) {
+       // texColor.a = dist;
+    //}
+    
+    texColor.a = distance(fragXY, playerXY) / 200;
     gl_FragColor = texColor;
 }

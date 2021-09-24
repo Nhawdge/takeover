@@ -29,5 +29,6 @@
     <Content Include="Systems\LevelGeneratorSystem.cs" />
     <Content Include="Systems\RenderSystem.cs" />
     <Content Include="Assets\shaders\fog.fs" />
+    <Content Include="Assets\shaders\light.fs" />
   </ItemGroup>
 </Project>
