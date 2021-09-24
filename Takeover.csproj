@@ -28,5 +28,6 @@
     <Content Include="Systems\AISystem.cs" />
     <Content Include="Systems\LevelGeneratorSystem.cs" />
     <Content Include="Systems\RenderSystem.cs" />
+    <Content Include="Assets\shaders\fog.fs" />
   </ItemGroup>
 </Project>

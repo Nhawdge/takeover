@@ -16,17 +16,25 @@ namespace Takeover.Systems
         private Texture2D aiTexture { get; set; }
         private Texture2D neutralTexture { get; set; }
         private Texture2D backgroundTexture { get; set; }
+        private Shader fogShader { get; set; }
+        private Shader lightShader { get; set; }
         public RenderSystem()
         {
             playerTexture = Raylib.LoadTexture("Assets/house.png");
             aiTexture = Raylib.LoadTexture("Assets/houseViking.png");
             neutralTexture = Raylib.LoadTexture("Assets/tipi.png");
             backgroundTexture = Raylib.LoadTexture("Assets/parchmentBasic.png");
+            fogShader = Raylib.LoadShader("0", "Assets/shaders/fog.fs");
+            lightShader = Raylib.LoadShader("0", "Assets/shaders/light.fs");
         }
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var source = new Rectangle(0, 0, backgroundTexture.width, backgroundTexture.height);
+            Raylib.BeginShaderMode(fogShader);
+            var bgLoc = Raylib.GetShaderLocation(fogShader, "background");
+            Raylib.SetShaderValueTexture(fogShader, bgLoc, backgroundTexture);
             Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.ORANGE);
+            Raylib.EndShaderMode();
 
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
             if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
@@ -74,14 +82,22 @@ namespace Takeover.Systems
                     var angle = Math.Atan2(yDiff, xDiff) * (180 / Math.PI);
                     rotation = (float)angle;
                     origin = new Vector2(render.width / 2, render.height / 2);
-                    Shader shader = new Shader();
 
-                    var value = 100;
-                    Raylib.SetShaderValue(shader, 10, ref value, ShaderUniformDataType.SHADER_UNIFORM_INT);
+                    //Raylib.SetShaderValue(shader, alphaLoc, ref alphaVal, ShaderUniformDataType.SHADER_UNIFORM_INT);
+                    //var textureLoc = Raylib.GetShaderLocation(shader, "ourTexture");
+                    //Raylib.SetShaderValueTexture(shader, textureLoc, playerTexture);
 
+                    Raylib.BeginShaderMode(lightShader);
+                    var playerLoc = Raylib.GetShaderLocation(lightShader, "player");
+
+                    Raylib.SetShaderValue(lightShader, playerLoc, &myPos, ShaderUniformDataType.SHADER_UNIFORM_VEC2);
+                    Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
+                    Raylib.EndShaderMode();
                 }
-
-                Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
+                else
+                {
+                    Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
+                }
             }
         }
     }

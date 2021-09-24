@@ -66,7 +66,7 @@ namespace Takeover.Systems
                     //toAdd.AddRange(GenerateRandomNodes(Factions.Player, 2));
                     var player = new Entity();
 
-                    player.Components.Add(new Render() { Texture = PlayerTexture });
+                    player.Components.Add(new Render(50, 50) { Texture = PlayerTexture });
                     player.Components.Add(new Controllable());
                     toAdd.Add(player);
                 }
