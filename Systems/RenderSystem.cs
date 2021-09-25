@@ -1,13 +1,9 @@
-using System.Net.Mime;
-using System.Text.RegularExpressions;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Raylib_cs;
 using Takeover.Components;
 using Takeover.Entities;
-using Takeover.Enums;
-using System.Runtime.InteropServices;
 
 namespace Takeover.Systems
 {
@@ -101,11 +97,6 @@ namespace Takeover.Systems
                     var angle = Math.Atan2(yDiff, xDiff) * (180 / Math.PI);
                     rotation = (float)angle;
                     origin = new Vector2(render.width / 2, render.height / 2);
-
-                    //Raylib.SetShaderValue(shader, alphaLoc, ref alphaVal, ShaderUniformDataType.SHADER_UNIFORM_INT);
-                    //var textureLoc = Raylib.GetShaderLocation(shader, "ourTexture");
-                    //Raylib.SetShaderValueTexture(shader, textureLoc, playerTexture);
-
 
                     Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
                 }
