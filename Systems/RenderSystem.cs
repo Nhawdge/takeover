@@ -21,14 +21,14 @@ namespace Takeover.Systems
             aiTexture = Raylib.LoadTexture("Assets/houseViking.png");
             neutralTexture = Raylib.LoadTexture("Assets/tipi.png");
             backgroundTexture = Raylib.LoadTexture("Assets/parchmentBasic.png");
-            fogShader = Raylib.LoadShader("0", "Assets/shaders/fog.fs");
+            //fogShader = Raylib.LoadShader("0", "Assets/shaders/fog.fs");
             lightShader = Raylib.LoadShader("0", "Assets/shaders/light.fs");
         }
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var source = new Rectangle(0, 0, backgroundTexture.width, backgroundTexture.height);
-            var bgLoc = Raylib.GetShaderLocation(fogShader, "background");
-            Raylib.SetShaderValueTexture(fogShader, bgLoc, backgroundTexture);
+            var bgLoc = Raylib.GetShaderLocation(lightShader, "ourTexture");
+            Raylib.SetShaderValueTexture(lightShader, bgLoc, backgroundTexture);
 
             var player = entities.Find(x => x.GetComponentByType<Controllable>() != null);
             var playerRender = player?.GetComponentByType<Render>();
@@ -37,17 +37,15 @@ namespace Takeover.Systems
                 var playerXLoc = Raylib.GetShaderLocation(lightShader, "playerX");
                 var playerYLoc = Raylib.GetShaderLocation(lightShader, "playerY");
                 var posX = (int)playerRender.Position.X;
-                var posY = Raylib.GetScreenHeight() - (int)playerRender.Position.Y;// (int)myPos.Y;
+                var posY = Raylib.GetScreenHeight() - (int)playerRender.Position.Y;
                 Raylib.SetShaderValue(lightShader, playerXLoc, ref posX, ShaderUniformDataType.SHADER_UNIFORM_INT);
                 Raylib.SetShaderValue(lightShader, playerYLoc, ref posY, ShaderUniformDataType.SHADER_UNIFORM_INT);
             }
 
-            Raylib.BeginShaderMode(fogShader);
+            Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.BLANK);
+
             Raylib.BeginShaderMode(lightShader);
-
-            Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.ORANGE);
-
-            Raylib.EndShaderMode();
+            Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.WHITE);
             Raylib.EndShaderMode();
 
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
@@ -105,6 +103,7 @@ namespace Takeover.Systems
                     Raylib.DrawTexturePro(texture, source, destination, origin, rotation, color);
                 }
             }
+
         }
     }
 }
