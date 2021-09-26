@@ -44,9 +44,6 @@ namespace Takeover.Systems
 
             Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.BLANK);
 
-            Raylib.BeginShaderMode(lightShader);
-            Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.WHITE);
-            Raylib.EndShaderMode();
 
             var singleton = entities.Find(x => x.GetComponentByType<Singleton>() != null);
             if (singleton.GetComponentByType<Singleton>().State != Enums.GameStates.InProgress)
@@ -104,6 +101,9 @@ namespace Takeover.Systems
                 }
             }
 
+            Raylib.BeginShaderMode(lightShader);
+            Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.WHITE);
+            Raylib.EndShaderMode();
         }
     }
 }

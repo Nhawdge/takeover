@@ -15,7 +15,7 @@ void main() {
     if(dist < 1) {
         texel.a = dist;
     } else {
-        texel = texel * vec4(0.1, 0.1, 0.1, 0.15);
+        texel.a = 1;
         //gl_FragColor = texel * vec4(0.75, 0.75, 0.75, 0.15);
     }
     gl_FragColor = texel;
