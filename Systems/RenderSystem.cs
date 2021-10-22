@@ -27,8 +27,8 @@ namespace Takeover.Systems
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var source = new Rectangle(0, 0, backgroundTexture.width, backgroundTexture.height);
-            var bgLoc = Raylib.GetShaderLocation(lightShader, "ourTexture");
-            Raylib.SetShaderValueTexture(lightShader, bgLoc, backgroundTexture);
+            //var bgLoc = Raylib.GetShaderLocation(lightShader, "ourTexture");
+            //Raylib.SetShaderValueTexture(lightShader, bgLoc, backgroundTexture);
 
             var player = entities.Find(x => x.GetComponentByType<Controllable>() != null);
             var playerRender = player?.GetComponentByType<Render>();

@@ -11,9 +11,9 @@ void main() {
     vec4 texel = texture(ourTexture, xy);
     vec2 playerXY = vec2(playerX, playerY);
 
-    float dist = distance(fragXY, playerXY) / 100;
-    if(dist < 1) {
-        texel.a = dist;
+    float dist = distance(fragXY, playerXY);
+    if(dist < 100) {
+        texel.a = dist / 100;
     } else {
         texel.a = 1;
         //gl_FragColor = texel * vec4(0.75, 0.75, 0.75, 0.15);
