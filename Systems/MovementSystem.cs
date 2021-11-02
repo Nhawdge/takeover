@@ -17,7 +17,6 @@ namespace Takeover.Systems
             }
             foreach (var entity in entities)
             {
-
                 var myControllable = entity.GetComponentByType<Controllable>();
                 var myRender = entity.GetComponentByType<Render>();
                 if (myControllable == null || myRender == null)

@@ -13,33 +13,32 @@ namespace Takeover.Systems
         private Texture2D aiTexture { get; set; }
         private Texture2D neutralTexture { get; set; }
         private Texture2D backgroundTexture { get; set; }
-        private Shader fogShader { get; set; }
-        private Shader lightShader { get; set; }
+        private Shader shader { get; set; }
         public RenderSystem()
         {
             playerTexture = Raylib.LoadTexture("Assets/house.png");
             aiTexture = Raylib.LoadTexture("Assets/houseViking.png");
             neutralTexture = Raylib.LoadTexture("Assets/tipi.png");
             backgroundTexture = Raylib.LoadTexture("Assets/parchmentBasic.png");
-            //fogShader = Raylib.LoadShader("0", "Assets/shaders/fog.fs");
-            lightShader = Raylib.LoadShader("0", "Assets/shaders/light.fs");
+
+            shader = Raylib.LoadShader("0", "Assets/shaders/light.fs");
         }
         public override void UpdateAll(List<Entity> entities, GameEngine engine)
         {
             var source = new Rectangle(0, 0, backgroundTexture.width, backgroundTexture.height);
-            var bgLoc = Raylib.GetShaderLocation(lightShader, "ourTexture");
-            Raylib.SetShaderValueTexture(lightShader, bgLoc, backgroundTexture);
+            var bgLoc = Raylib.GetShaderLocation(shader, "ourTexture");
+            Raylib.SetShaderValueTexture(shader, bgLoc, backgroundTexture);
 
             var player = entities.Find(x => x.GetComponentByType<Controllable>() != null);
             var playerRender = player?.GetComponentByType<Render>();
             if (playerRender != null)
             {
-                var playerXLoc = Raylib.GetShaderLocation(lightShader, "playerX");
-                var playerYLoc = Raylib.GetShaderLocation(lightShader, "playerY");
+                var playerXLoc = Raylib.GetShaderLocation(shader, "playerX");
+                var playerYLoc = Raylib.GetShaderLocation(shader, "playerY");
                 var posX = (int)playerRender.Position.X;
                 var posY = Raylib.GetScreenHeight() - (int)playerRender.Position.Y;
-                Raylib.SetShaderValue(lightShader, playerXLoc, ref posX, ShaderUniformDataType.SHADER_UNIFORM_INT);
-                Raylib.SetShaderValue(lightShader, playerYLoc, ref posY, ShaderUniformDataType.SHADER_UNIFORM_INT);
+                Raylib.SetShaderValue(shader, playerXLoc, ref posX, ShaderUniformDataType.SHADER_UNIFORM_INT);
+                Raylib.SetShaderValue(shader, playerYLoc, ref posY, ShaderUniformDataType.SHADER_UNIFORM_INT);
             }
 
             Raylib.DrawTexturePro(backgroundTexture, source, new Rectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), new Vector2(0, 0), 0f, Color.BLANK);
@@ -50,6 +49,7 @@ namespace Takeover.Systems
             {
                 return;
             }
+
 
             foreach (var entity in entities)
             {
@@ -72,7 +72,7 @@ namespace Takeover.Systems
                     Raylib.DrawRectangle((int)render.Position.X - 2, (int)render.Position.Y - 2, render.width + 4, render.height + 4, bgcolor);
                 }
 
-                var color = Color.GRAY;
+                var color = Color.BLACK;
                 var team = entity.GetComponentByType<Allegiance>()?.Team ?? Enums.Factions.Neutral;
                 var texture = render.Texture;
 
@@ -101,8 +101,8 @@ namespace Takeover.Systems
                 }
             }
 
-            Raylib.BeginShaderMode(lightShader);
-            Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.WHITE);
+            Raylib.BeginShaderMode(shader);
+            Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.BLANK);
             Raylib.EndShaderMode();
         }
     }

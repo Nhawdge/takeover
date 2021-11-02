@@ -30,5 +30,8 @@
     <Content Include="Systems\RenderSystem.cs" />
     <Content Include="Assets\shaders\fog.fs" />
     <Content Include="Assets\shaders\light.fs" />
+    <Content Include="Components\TowerSecurity.cs" />
+    <Content Include="Systems\TowerSecuritySystem.cs" />
+    <Content Include="Systems\WinSystem.cs" />
   </ItemGroup>
 </Project>

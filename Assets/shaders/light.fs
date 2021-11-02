@@ -1,4 +1,4 @@
-#version 330 core
+#version 130 core
 
 uniform sampler2D ourTexture;
 uniform int playerX;
@@ -12,11 +12,11 @@ void main() {
     vec2 playerXY = vec2(playerX, playerY);
 
     float dist = distance(fragXY, playerXY) / 100;
-    if(dist < 1) {
+    if(dist <= 1) {
         texel.a = dist;
     } else {
-        texel.a = 1;
-        //gl_FragColor = texel * vec4(0.75, 0.75, 0.75, 0.15);
+        discard;
+        texel + vec4(0.1, 0.1, 0.1, 1);
     }
     gl_FragColor = texel;
 
